@@ -18,4 +18,8 @@ public class MovieService {
     public List<Movie> saveAll(List<Movie> movies) {
         return repository.saveAll(movies);
     }
+
+    public List<Movie> findDistinctProducersAndYearWhereWinnerTrue() {
+        return repository.findDistinctProducersAndYearWhereWinnerTrue();
+    }
 }

@@ -32,4 +32,9 @@ public class Movie {
 
     @Column(nullable = false)
     private boolean winner;
+
+    public Movie(String producers, Integer movieYear) {
+        this.producers = producers;
+        this.movieYear = movieYear;
+    }
 }
