@@ -15,7 +15,7 @@ public class WinnerService {
     @Autowired
     private MovieService movieService;
 
-    public WinnerProducersVO getWinnerProducers() {
+    public WinnerProducersVO getWinnerProducersMinimumAndMaximumInterval() {
         List<Movie> winnerMovies = movieService.findDistinctProducersAndYearWhereWinnerTrue();
 
         List<Map.Entry<String, List<Movie>>> groupedMovies = getGroupedMoviesByProducersThatWinnerMoreThanOnce(winnerMovies);

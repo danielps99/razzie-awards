@@ -1,4 +1,4 @@
-package br.com.bdws.razzieawards.winner.config;
+package br.com.bdws.razzieawards.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/winner")
 public class WinnerController {
 
     @Autowired
     private WinnerService winnerService;
 
-    @GetMapping("/winner")
+    @GetMapping("/producers-minimum-maximum-interval")
     @ResponseBody
-    public WinnerProducersVO getWinnerProducers(){
-        return winnerService.getWinnerProducers();
+    public WinnerProducersVO getWinnerProducersMinimumAndMaximumInterval(){
+        return winnerService.getWinnerProducersMinimumAndMaximumInterval();
     }
 }

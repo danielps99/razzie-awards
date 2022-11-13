@@ -4,7 +4,7 @@ import br.com.bdws.razzieawards.service.DataLoaderService;
 import br.com.bdws.razzieawards.service.MovieService;
 import br.com.bdws.razzieawards.viewobject.WinnerProducersVO;
 import br.com.bdws.razzieawards.viewobject.WinnerVO;
-import br.com.bdws.razzieawards.winner.config.BaseControlerTest;
+import br.com.bdws.razzieawards.config.BaseControlerTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class WinnerControllerTest extends BaseControlerTest {
+
+    private final String urlProducersMinimumAndMaximumInterval = urlApi + "/winner/producers-minimum-maximum-interval";
 
     @Autowired
     private MockMvc mockMvc;
@@ -160,7 +162,7 @@ public class WinnerControllerTest extends BaseControlerTest {
 
     @Test
     void shouldReturnEmptyMinAndMaxWhenThereAreNoMovie() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -177,7 +179,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1992;Shining Through;20th Century Fox;Carol Baum and Howard Rosenman;yes");
         loadMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -194,7 +196,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1992;Hudson Hawk 2;TriStar Pictures;Joel Silver;");
         loadMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -211,7 +213,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1991;Other title movie;TriStar Pictures;Joel Silver;yes");
         loadMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -229,7 +231,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1993;Indecent Proposal;Paramount Pictures;Sherry Lansing;yes");
         loadMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -252,7 +254,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1993;Indecent Proposal 2;Paramount Pictures;Sherry Lansing;yes");
         loadMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -271,7 +273,7 @@ public class WinnerControllerTest extends BaseControlerTest {
     void shouldReturnSameMinAndMaxWhenOnlyOneProducerWonMoreThanOnceLoadedMoreMovies() throws Exception {
         addAndLoadSomeMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -292,7 +294,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1987;Bolero 3;Cannon Films;Bo Derek;yes");
         addAndLoadSomeMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
@@ -316,7 +318,7 @@ public class WinnerControllerTest extends BaseControlerTest {
         addMovie("1989;Inchon;MGM;Mitsuharu Ishii;yes");
         addAndLoadSomeMoviesFromMockCsv();
 
-        MvcResult mvcResult = mockMvc.perform(get(urlApi+"/winner")
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 

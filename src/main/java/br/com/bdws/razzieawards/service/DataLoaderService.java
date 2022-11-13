@@ -29,7 +29,7 @@ public class DataLoaderService {
             return;
         }
         loadMoviesFromCsvFile();
-        log.info("Try access http://127.0.0.1:8080/api/winner");
+        log.info("Try access http://127.0.0.1:8080/api/winner/producers-minimum-maximum-interval");
     }
 
     public void loadMoviesFromCsvFile() {
