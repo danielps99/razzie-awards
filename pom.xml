@@ -12,7 +12,7 @@
 	<artifactId>razzie-awards</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>razzie-awards</name>
-	<description> Razzie Awards - Golden Raspberry Awards</description>
+	<description>Razzie Awards - Golden Raspberry Awards</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
