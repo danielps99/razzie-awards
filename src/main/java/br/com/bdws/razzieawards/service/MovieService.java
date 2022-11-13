@@ -22,4 +22,8 @@ public class MovieService {
     public List<Movie> findDistinctProducersAndYearWhereWinnerTrue() {
         return repository.findDistinctProducersAndYearWhereWinnerTrue();
     }
+
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }

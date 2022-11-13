@@ -14,6 +14,6 @@ public class RunAfterStartup {
 
     @EventListener(ApplicationReadyEvent.class)
     public void runAfterStartup() {
-        dataLoader.loadMoviesFromCsv();
+        dataLoader.decideIfShouldLoadMoviesFromCsvFile();
     }
 }
