@@ -79,7 +79,7 @@ public class WinnerService {
 
     private WinnerVO getPossibleWinnerWithMaximumOrMinimumInterval(List<Movie> movies, int index, boolean getMaximum) {
         Movie first = movies.get(index);
-        WinnerVO created = WinnerVO.builder().producers(first.getProducers()).build();
+        WinnerVO created = WinnerVO.builder().producers(first.getProducersOld()).build();
         if (index < movies.size() -1) {
             index++;
             Movie last = movies.get(index);
@@ -109,6 +109,6 @@ public class WinnerService {
     }
 
     private Map<String, List<Movie>> groupMoviesByProducers(List<Movie> winnerMovies) {
-        return winnerMovies.stream().collect(Collectors.groupingBy(Movie::getProducers));
+        return winnerMovies.stream().collect(Collectors.groupingBy(Movie::getProducersOld));
     }
 }

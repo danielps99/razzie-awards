@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface IMovieRepository extends JpaRepository<Movie, Long> {
 
-    @Query(value = "SELECT distinct new Movie(m.producers, m.movieYear) FROM Movie m WHERE winner=true")
+    @Query(value = "SELECT distinct new Movie(m.producersOld, m.movieYear) FROM Movie m WHERE winner=true")
     List<Movie> findDistinctProducersAndYearWhereWinnerTrue();
 }

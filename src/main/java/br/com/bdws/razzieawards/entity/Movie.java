@@ -3,6 +3,7 @@ package br.com.bdws.razzieawards.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Getter
@@ -27,14 +28,16 @@ public class Movie {
     @Column(nullable = false)
     private String studios;
 
-    @Column(nullable = false)
-    private String producers;
+    private String producersOld;
 
     @Column(nullable = false)
     private boolean winner;
 
-    public Movie(String producers, Integer movieYear) {
-        this.producers = producers;
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MovieProducer> producers;
+
+    public Movie(String producersOld, Integer movieYear) {
+        this.producersOld = producersOld;
         this.movieYear = movieYear;
     }
 }
