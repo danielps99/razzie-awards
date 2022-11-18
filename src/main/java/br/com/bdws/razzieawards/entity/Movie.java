@@ -28,16 +28,9 @@ public class Movie {
     @Column(nullable = false)
     private String studios;
 
-    private String producersOld;
-
     @Column(nullable = false)
     private boolean winner;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MovieProducer> producers;
-
-    public Movie(String producersOld, Integer movieYear) {
-        this.producersOld = producersOld;
-        this.movieYear = movieYear;
-    }
 }

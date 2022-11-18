@@ -2,6 +2,7 @@ package br.com.bdws.razzieawards.winner;
 
 import br.com.bdws.razzieawards.service.DataLoaderService;
 import br.com.bdws.razzieawards.service.MovieService;
+import br.com.bdws.razzieawards.service.ProducerService;
 import br.com.bdws.razzieawards.viewobject.WinnerProducersVO;
 import br.com.bdws.razzieawards.viewobject.WinnerVO;
 import br.com.bdws.razzieawards.config.BaseControlerTest;
@@ -35,6 +36,9 @@ public class WinnerControllerTest extends BaseControlerTest {
 
     @Autowired
     private MovieService movieService;
+
+    @Autowired
+    private ProducerService producerService;
 
     private StringBuilder sbMockCsvFileMovies;
 
@@ -313,7 +317,7 @@ public class WinnerControllerTest extends BaseControlerTest {
     void shouldReturnTwoMinsAndThreeMaxs() throws Exception {
         addMovie("1990;Star Trek VI: The Final Frontier;Paramount Pictures;Harve Bennett;yes");
         addMovie("1987;Howard the Duck 2;Universal Studios;Gloria Katz;yes");
-        addMovie("1995;Cocktail 2;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        addMovie("1995;Cocktail 2;Touchstone Pictures;Ted Field;yes");
         addMovie("1994;Leonard Part 6.2;Columbia Pictures;Bill Cosby;yes");
         addMovie("1989;Inchon;MGM;Mitsuharu Ishii;yes");
         addAndLoadSomeMoviesFromMockCsv();
@@ -336,6 +340,99 @@ public class WinnerControllerTest extends BaseControlerTest {
         assertWinnerVoEquals(min1, "Harve Bennett", 1, 1989, 1990);
         assertWinnerVoEquals(max0, "Mitsuharu Ishii", 7, 1982, 1989);
         assertWinnerVoEquals(max1, "Bill Cosby", 7, 1987, 1994);
-        assertWinnerVoEquals(max2, "Ted Field and Robert W. Cort", 7, 1988, 1995);
+        assertWinnerVoEquals(max2, "Ted Field", 7, 1988, 1995);
+    }
+
+    @Test
+    void shouldReturnSameMinAndMaxWhenMovieHasMoreThanOneProducerAndOnlyOneWonTwice() throws Exception {
+        addMovie("1988;Cocktail;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        addMovie("1995;Cocktail 2;Touchstone Pictures;Ted Field;yes");
+        loadMoviesFromMockCsv();
+
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        WinnerProducersVO result = convertJsonToObject(mvcResult, WinnerProducersVO.class);
+
+        assertEquals(1, result.getMin().size());
+        assertEquals(1, result.getMax().size());
+
+        WinnerVO min0 = result.getMin().get(0);
+        WinnerVO max0 = result.getMax().get(0);
+        assertWinnerVoEquals(min0, "Ted Field", 7, 1988, 1995);
+        assertWinnerVoEquals(max0, "Ted Field", 7, 1988, 1995);
+    }
+
+    @Test
+    void shouldReturnMinAndMaxWhenMovieHasMoreThanOneProducerThatWonInDifferentYears() throws Exception {
+        addMovie("1988;Cocktail;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        addMovie("1995;Cocktail 2;Touchstone Pictures;Ted Field;yes");
+        addMovie("1990;Other movie;Touchstone Pictures;Robert W. Cort, Other producer;yes");
+        loadMoviesFromMockCsv();
+
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        WinnerProducersVO result = convertJsonToObject(mvcResult, WinnerProducersVO.class);
+
+        assertEquals(1, result.getMin().size());
+        assertEquals(1, result.getMax().size());
+
+        WinnerVO min0 = result.getMin().get(0);
+        WinnerVO max0 = result.getMax().get(0);
+        assertWinnerVoEquals(min0, "Robert W. Cort", 2, 1988, 1990);
+        assertWinnerVoEquals(max0, "Ted Field", 7, 1988, 1995);
+    }
+
+    @Test
+    void shouldReturnSameMinAndMaxWhenMovieHasMoreThanOneProducer() throws Exception {
+        addMovie("1988;Cocktail;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        addMovie("1995;Cocktail 2;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        loadMoviesFromMockCsv();
+
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        WinnerProducersVO result = convertJsonToObject(mvcResult, WinnerProducersVO.class);
+
+        assertEquals(2, result.getMin().size());
+        assertEquals(2, result.getMax().size());
+
+        WinnerVO min0 = result.getMin().get(0);
+        WinnerVO min1 = result.getMin().get(1);
+        WinnerVO max0 = result.getMax().get(0);
+        WinnerVO max1 = result.getMax().get(1);
+        assertWinnerVoEquals(min0, "Robert W. Cort", 7, 1988, 1995);
+        assertWinnerVoEquals(min1, "Ted Field", 7, 1988, 1995);
+        assertWinnerVoEquals(max0, "Robert W. Cort", 7, 1988, 1995);
+        assertWinnerVoEquals(max1, "Ted Field", 7, 1988, 1995);
+    }
+
+    @Test
+    void shouldReturnThreeMinsAndTwoMaxsWhenMovieHasMoreThanOneProducer() throws Exception {
+        addMovie("1988;Cocktail;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        addMovie("1995;Cocktail 2;Touchstone Pictures;Ted Field and Robert W. Cort;yes");
+        addMovie("1986;Under the Cherry Moon;Warner Bros.;Bob Cavallo, Joe Ruffalo and Steve Fargnoli;yes");
+        addMovie("1987;Under the Cherry Moon 2;Warner Bros.;Bob Cavallo, Joe Ruffalo and Steve Fargnoli;yes");
+        loadMoviesFromMockCsv();
+
+        MvcResult mvcResult = mockMvc.perform(get(urlProducersMinimumAndMaximumInterval)
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        WinnerProducersVO result = convertJsonToObject(mvcResult, WinnerProducersVO.class);
+
+        assertEquals(3, result.getMin().size());
+        assertEquals(2, result.getMax().size());
+
+        WinnerVO min0 = result.getMin().get(0);
+        WinnerVO min1 = result.getMin().get(1);
+        WinnerVO min2 = result.getMin().get(2);
+        WinnerVO max0 = result.getMax().get(0);
+        WinnerVO max1 = result.getMax().get(1);
+        assertWinnerVoEquals(min0, "Bob Cavallo", 1, 1986, 1987);
+        assertWinnerVoEquals(min1, "Joe Ruffalo", 1, 1986, 1987);
+        assertWinnerVoEquals(min2, "Steve Fargnoli", 1, 1986, 1987);
+        assertWinnerVoEquals(max0, "Robert W. Cort", 7, 1988, 1995);
+        assertWinnerVoEquals(max1, "Ted Field", 7, 1988, 1995);
     }
 }

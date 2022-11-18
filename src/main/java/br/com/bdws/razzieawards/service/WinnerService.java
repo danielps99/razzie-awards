@@ -1,6 +1,6 @@
 package br.com.bdws.razzieawards.service;
 
-import br.com.bdws.razzieawards.entity.Movie;
+import br.com.bdws.razzieawards.viewobject.ProducerMovieYearVO;
 import br.com.bdws.razzieawards.viewobject.WinnerProducersVO;
 import br.com.bdws.razzieawards.viewobject.WinnerVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 public class WinnerService {
 
     @Autowired
-    private MovieService movieService;
+    private ProducerService producerService;
 
     public WinnerProducersVO getWinnerProducersMinimumAndMaximumInterval() {
-        List<Movie> winnerMovies = movieService.findDistinctProducersAndYearWhereWinnerTrue();
+        List<ProducerMovieYearVO> producers = producerService.findDistinctProducerAndYearWhereWinnerTrue();
 
-        List<Map.Entry<String, List<Movie>>> groupedMovies = getGroupedMoviesByProducersThatWinnerMoreThanOnce(winnerMovies);
+        List<Map.Entry<String, List<ProducerMovieYearVO>>> groupedProducers = getGroupedProdYearsByProducerThatWinnerMoreThanOnce(producers);
 
         List <WinnerVO> winnersMinInterval = new ArrayList<>();
         List <WinnerVO> winnersMaxInterval = new ArrayList<>();
-        fillMinimumAndMaximumIntervalOfPossibleWinners(groupedMovies, winnersMinInterval, winnersMaxInterval);
+        fillMinimumAndMaximumIntervalOfPossibleWinners(groupedProducers, winnersMinInterval, winnersMaxInterval);
 
         return filterWinnersAndCreateWinnerProducersVO(winnersMinInterval, winnersMaxInterval);
     }
@@ -67,26 +67,26 @@ public class WinnerService {
         return winners.stream().filter(w -> w.getInterval() == interval).collect(Collectors.toList());
     }
 
-    private void fillMinimumAndMaximumIntervalOfPossibleWinners(List<Map.Entry<String, List<Movie>>> groupedMovies, List <WinnerVO> mins, List <WinnerVO> maxs) {
-        for (Map.Entry<String, List<Movie>> group : groupedMovies) {
-            List<Movie> movies = group.getValue();
-            movies.sort(Comparator.comparing(Movie::getMovieYear));
+    private void fillMinimumAndMaximumIntervalOfPossibleWinners(List<Map.Entry<String, List<ProducerMovieYearVO>>> groupeds, List <WinnerVO> mins, List <WinnerVO> maxs) {
+        for (Map.Entry<String, List<ProducerMovieYearVO>> group : groupeds) {
+            List<ProducerMovieYearVO> prodYears = group.getValue();
+            prodYears.sort(Comparator.comparing(ProducerMovieYearVO::getMovieYear));
 
-            mins.add(getPossibleWinnerWithMaximumOrMinimumInterval(movies, 0, false));
-            maxs.add(getPossibleWinnerWithMaximumOrMinimumInterval(movies, 0, true));
+            mins.add(getPossibleWinnerWithMaximumOrMinimumInterval(prodYears, 0, false));
+            maxs.add(getPossibleWinnerWithMaximumOrMinimumInterval(prodYears, 0, true));
         }
     }
 
-    private WinnerVO getPossibleWinnerWithMaximumOrMinimumInterval(List<Movie> movies, int index, boolean getMaximum) {
-        Movie first = movies.get(index);
-        WinnerVO created = WinnerVO.builder().producers(first.getProducersOld()).build();
-        if (index < movies.size() -1) {
+    private WinnerVO getPossibleWinnerWithMaximumOrMinimumInterval(List<ProducerMovieYearVO> prodYears, int index, boolean getMaximum) {
+        ProducerMovieYearVO first = prodYears.get(index);
+        WinnerVO created = WinnerVO.builder().producers(first.getProducer()).build();
+        if (index < prodYears.size() -1) {
             index++;
-            Movie last = movies.get(index);
+            ProducerMovieYearVO last = prodYears.get(index);
             created.setPreviousWin(first.getMovieYear())
                     .setFollowingWin(last.getMovieYear());
 
-            WinnerVO returned = getPossibleWinnerWithMaximumOrMinimumInterval(movies, index, getMaximum);
+            WinnerVO returned = getPossibleWinnerWithMaximumOrMinimumInterval(prodYears, index, getMaximum);
 
             created.setPreviousWin(first.getMovieYear())
                     .setFollowingWin(last.getMovieYear());
@@ -103,12 +103,12 @@ public class WinnerService {
         return w1.hasInterval() && w1.getInterval() < w2.getInterval() ? w1 : w2;
     }
 
-    private List<Map.Entry<String, List<Movie>>> getGroupedMoviesByProducersThatWinnerMoreThanOnce(List<Movie> winnerMovies) {
-        Map<String, List<Movie>> groupedMovies = groupMoviesByProducers(winnerMovies);
-        return groupedMovies.entrySet().stream().filter(map -> map.getValue().size() > 1).collect(Collectors.toList());
+    private List<Map.Entry<String, List<ProducerMovieYearVO>>> getGroupedProdYearsByProducerThatWinnerMoreThanOnce(List<ProducerMovieYearVO> producers) {
+        Map<String, List<ProducerMovieYearVO>> groupedProducers = groupProducerMovieYearsByProducer(producers);
+        return groupedProducers.entrySet().stream().filter(map -> map.getValue().size() > 1).collect(Collectors.toList());
     }
 
-    private Map<String, List<Movie>> groupMoviesByProducers(List<Movie> winnerMovies) {
-        return winnerMovies.stream().collect(Collectors.groupingBy(Movie::getProducersOld));
+    private Map<String, List<ProducerMovieYearVO>> groupProducerMovieYearsByProducer(List<ProducerMovieYearVO> producers) {
+        return producers.stream().collect(Collectors.groupingBy(ProducerMovieYearVO::getProducer));
     }
 }
